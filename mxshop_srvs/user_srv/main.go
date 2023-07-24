@@ -1,5 +1,28 @@
 package main
 
-func main() {
+import (
+	"flag"
+	"fmt"
+	"google.golang.org/grpc"
+	"log"
+	"mxshop_srvs/user_srv/handler"
+	"mxshop_srvs/user_srv/proto"
+	"net"
+)
 
+func main() {
+	ip := flag.String("ip", "127.0.0.1", "ip地址")
+	port := flag.Int("port", 8080, "端口")
+	flag.Parse()
+
+	server := grpc.NewServer()
+	proto.RegisterUserServer(server, &handler.UserServers{})
+	listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *ip, *port))
+	if err != nil {
+		log.Panic("failed to listen: " + err.Error())
+	}
+	err = server.Serve(listen)
+	if err != nil {
+		log.Panic("failed to start grpc: " + err.Error())
+	}
 }

@@ -2,8 +2,10 @@ package main
 
 import (
 	"crypto/md5"
+	"crypto/sha512"
 	"encoding/hex"
 	"fmt"
+	"github.com/anaskhan96/go-password-encoder"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,11 +14,15 @@ import (
 	"log"
 	"mxshop_srvs/user_srv/model"
 	"os"
+	"strings"
 	"time"
 )
 
 func main() {
-	createTable()
+	pwd := passwordEndCode("qwerty")
+	fmt.Println(len(pwd))
+	b := verifyPwd("qwerty", pwd)
+	fmt.Println(b)
 }
 
 func createTable() {
@@ -39,7 +45,7 @@ func createTable() {
 		Logger: newLogger,
 	})
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	err = db.AutoMigrate(&model.User{})
 	if err != nil {
@@ -52,4 +58,22 @@ func genMd5(code string) string {
 	Md5 := md5.New()
 	_, _ = io.WriteString(Md5, code)
 	return hex.EncodeToString(Md5.Sum(nil))
+}
+
+var options = &password.Options{
+	SaltLen:      16,
+	Iterations:   100,
+	KeyLen:       32,
+	HashFunction: sha512.New,
+}
+
+func passwordEndCode(pwd string) (encode string) {
+	salt, encodedPwd := password.Encode(pwd, options)
+	encode = fmt.Sprintf("pbkdf2-sha512$%s$%s", salt, encodedPwd)
+	return
+}
+
+func verifyPwd(rawPwd string, encode string) bool {
+	strs := strings.Split(encode, "$")
+	return password.Verify(rawPwd, strs[1], strs[2], options)
 }
