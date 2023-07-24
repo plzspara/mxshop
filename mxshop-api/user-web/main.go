@@ -2,14 +2,15 @@ package main
 
 import (
 	"go.uber.org/zap"
-	inittialize2 "mxshop-api/user-web/inittialize"
+	"mxshop-api/inittialize"
 	"strconv"
 )
 
 func main() {
 	port := 8080
-	inittialize2.InitLogger()
-	routers := inittialize2.Routers()
+	inittialize.InitLogger()
+	inittialize.InitConfig()
+	routers := inittialize.Routers()
 	zap.S().Debugf("启动user api，端口：%d", port)
 	err := routers.Run(":" + strconv.Itoa(port))
 	if err != nil {

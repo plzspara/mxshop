@@ -14,7 +14,7 @@ import (
 
 func main() {
 	ip := flag.String("ip", "127.0.0.1", "ip地址")
-	port := flag.Int("port", 9080, "端口")
+	port := flag.Int("port", 9090, "端口")
 	flag.Parse()
 	inittialize.InitLogger()
 	zap.S().Debugf("启动user服务，端口：%d", *port)
