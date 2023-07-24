@@ -38,7 +38,6 @@ type UserServers struct {
 func ModelToResponse(user User) UserInfoResponse {
 	userInfoRsp := UserInfoResponse{
 		Id:       user.Id,
-		Password: user.Password,
 		Mobile:   user.Mobile,
 		Nickname: user.Nickname,
 		Gender:   user.Gender,
@@ -59,7 +58,7 @@ func (u *UserServers) GetUserList(_ context.Context, req *PageInfo) (*UserListRe
 
 	rsp := &UserListResponse{}
 	rsp.Total = int32(result.RowsAffected)
-	DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(users)
+	DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(&users)
 	for i := range users {
 		userInfoRsp := ModelToResponse(users[i])
 		rsp.UserInfo = append(rsp.UserInfo, &userInfoRsp)
