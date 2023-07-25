@@ -19,9 +19,10 @@ import (
 )
 
 func main() {
-	pwd := passwordEndCode("qwerty")
+	pwd := passwordEndCode("123456")
 	fmt.Println(len(pwd))
-	b := verifyPwd("qwerty", pwd)
+	b := verifyPwd("123456", pwd)
+	b = verifyPwd("123456", "pbkdf2-sha512$2eOcepUWt85lIE8Q$da5e190972039d0cf3785f93d03677478fc371f5663a972e86c8959a42420664")
 	fmt.Println(b)
 }
 

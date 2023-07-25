@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
 	"github.com/golang/protobuf/ptypes/empty"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -38,6 +39,7 @@ type UserServers struct {
 func ModelToResponse(user User) UserInfoResponse {
 	userInfoRsp := UserInfoResponse{
 		Id:       user.Id,
+		Password: user.Password,
 		Mobile:   user.Mobile,
 		Nickname: user.Nickname,
 		Gender:   user.Gender,
