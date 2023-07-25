@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -12,6 +13,7 @@ import (
 	"mxshop-api/form"
 	"mxshop-api/global"
 	"mxshop-api/proto"
+	"mxshop-api/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -106,8 +108,8 @@ func PasswordLogin(ctx *gin.Context) {
 	err := ctx.ShouldBind(&loginForm)
 	if err != nil {
 		zap.S().Errorw("LoginForm error", err.Error())
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "内部错误",
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"msg": "账号密码不符合要求",
 		})
 		return
 	}
@@ -153,8 +155,29 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 	if rsp.Success {
+		claims := utils.CustomClaims{
+			Id:          uint(userInfoResponse.Id),
+			Nickname:    userInfoResponse.Nickname,
+			AuthorityId: uint(userInfoResponse.Role),
+			RegisteredClaims: jwt.RegisteredClaims{
+				NotBefore: jwt.NewNumericDate(time.Now()),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 30)),
+				Issuer:    "plz",
+			},
+		}
+		token, err := utils.NewJwt(claims, []byte(global.ServerConfig.JwtInfo.Key))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"msg": "内部错误",
+			})
+			return
+		}
 		ctx.JSON(http.StatusOK, gin.H{
-			"msg": "登录成功",
+			"id":        userInfoResponse.Id,
+			"nickname":  userInfoResponse.Nickname,
+			"token":     token,
+			"expiredAt": time.Now().Add(time.Hour * 24 * 30).Unix(),
+			"msg":       "登录成功",
 		})
 	} else {
 		ctx.JSON(http.StatusBadRequest, gin.H{

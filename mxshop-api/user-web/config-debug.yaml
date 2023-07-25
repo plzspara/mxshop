@@ -1,5 +1,9 @@
 name: 'user-web'
+port: 8080
 user_srv:
   host: '127.0.0.1'
   port: 9090
+
+jwt:
+  key : 'khmfITUwoarekuhn2P0J%kQzs54#IPU2'
 
