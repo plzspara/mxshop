@@ -11,5 +11,6 @@ func InitUserRouter(router *gin.RouterGroup) {
 	{
 		userRouter.GET("list", middlewares.JwtAuth(), middlewares.AdminAuth(), api.GetUserList)
 		userRouter.POST("login", api.PasswordLogin)
+		userRouter.GET("captcha", api.GetCaptcha)
 	}
 }
