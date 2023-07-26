@@ -9,9 +9,17 @@ type Jwt struct {
 	Key string `mapstructure:"key"`
 }
 
+type Redis struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Password string `mapstructure:"password"`
+	Db       int    `mapstructure:"db"`
+}
+
 type ServerConfig struct {
 	Name        string        `mapstructure:"name"`
 	Port        int           `mapstructure:"port"`
 	UserSrvInfo UserSrvConfig `mapstructure:"user_srv"`
 	JwtInfo     Jwt           `mapstructure:"jwt"`
+	RedisConfig Redis         `mapstructure:"redis"`
 }
