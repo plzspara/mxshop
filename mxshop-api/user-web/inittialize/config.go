@@ -29,7 +29,7 @@ func InitConfig() {
 		zap.S().Infow("配置文件产生变化：", in.Name)
 		_ = v.ReadInConfig()
 		_ = v.Unmarshal(&global.ServerConfig)
-		zap.S().Infow("配置信息：", global.ServerConfig.UserSrvInfo.Host, global.ServerConfig.UserSrvInfo.Port)
+		zap.S().Infow("配置信息：", global.ServerConfig)
 	})
 
 }

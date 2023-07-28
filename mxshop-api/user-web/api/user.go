@@ -58,16 +58,7 @@ func GetUserList(ctx *gin.Context) {
 		})
 		return
 	}
-	conn, err := utils.GetConnClient()
-	if err != nil {
-		zap.S().Errorf("GetConnClient error: %v", err.Error())
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "内部错误",
-		})
-		return
-	}
-	defer conn.Close()
-	client := proto.NewUserClient(conn)
+	client := proto.NewUserClient(global.GrpcClient)
 	list, err := client.GetUserList(context.Background(), &proto.PageInfo{
 		Pn:    uint32(page),
 		PSize: uint32(pageSize),
@@ -110,16 +101,7 @@ func PasswordLogin(ctx *gin.Context) {
 		return
 	}
 
-	conn, err := utils.GetConnClient()
-	if err != nil {
-		zap.S().Errorf("GetConnClient error: %v", err.Error())
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "内部错误",
-		})
-		return
-	}
-	defer conn.Close()
-	client := proto.NewUserClient(conn)
+	client := proto.NewUserClient(global.GrpcClient)
 	userInfoResponse, err := client.GetUserByMobile(context.Background(), &proto.MobileRequest{
 		Mobile: loginForm.Mobile,
 	})
@@ -203,16 +185,7 @@ func MobileLogin(ctx *gin.Context) {
 		})
 		return
 	}
-	connClient, err := utils.GetConnClient()
-	if err != nil {
-		zap.S().Errorw("LoginForm ", "error", err.Error())
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "内部错误",
-		})
-		return
-	}
-	defer connClient.Close()
-	userClient := proto.NewUserClient(connClient)
+	userClient := proto.NewUserClient(global.GrpcClient)
 	userInfoResponse, err := userClient.GetUserByMobile(context.Background(), &proto.MobileRequest{Mobile: loginForm.Mobile})
 	if err != nil {
 		zap.S().Errorw("GetUserByMobile ", "error", err.Error())
@@ -277,16 +250,7 @@ func Register(ctx *gin.Context) {
 		})
 		return
 	}
-	connClient, err := utils.GetConnClient()
-	if err != nil {
-		zap.S().Errorw("LoginForm ", "error", err.Error())
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"msg": "内部错误",
-		})
-		return
-	}
-	defer connClient.Close()
-	userClient := proto.NewUserClient(connClient)
+	userClient := proto.NewUserClient(global.GrpcClient)
 	_, err = userClient.CreateUser(context.Background(), &proto.CreateUserInfo{
 		Password: userRegister.Password,
 		Mobile:   userRegister.Mobile,
