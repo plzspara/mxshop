@@ -17,3 +17,18 @@ type ServerConfig struct {
 	MysqlInfo  MysqlConfig  `json:"mysql" mapstructure:"mysql"`
 	ConsulInfo ConsulConfig `json:"consul" mapstructure:"consul"`
 }
+
+type NacosInfo struct {
+	Ip                  string `mapstructure:"ip"`
+	Port                uint64 `mapstructure:"port"`
+	NamespaceId         string `mapstructure:"namespaceid"`
+	TimeoutMs           uint64 `mapstructure:"timeoutms"`
+	NotLoadCacheAtStart bool   `mapstructure:"notloadcacheatstart"`
+	LogDir              string `mapstructure:"logdir"`
+	CacheDir            string `mapstructure:"cachedir"`
+	LogLevel            string `mapstructure:"loglevel"`
+}
+
+type NacosConfig struct {
+	Nacos NacosInfo `json:"nacos"`
+}

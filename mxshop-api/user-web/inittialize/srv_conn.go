@@ -3,6 +3,7 @@ package inittialize
 import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	_ "github.com/mbobakov/grpc-consul-resolver"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -36,20 +37,13 @@ func InitConn() {
 	if err != nil {
 		zap.S().Panic(err)
 	}
-	filter := fmt.Sprintf("Service == \"%s\"", global.ServerConfig.UserSrvInfo.Name)
-	services, err := client.Agent().ServicesWithFilter(filter)
-	if err != nil {
-		zap.S().Panic(err)
-	}
-	grpcHost := ""
-	grpcPort := 0
-	for s := range services {
-		grpcHost = services[s].Address
-		grpcPort = services[s].Port
-	}
-	global.GrpcClient, err = grpc.Dial(fmt.Sprintf("%s:%d", grpcHost, grpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		zap.S().Panic(err)
-	}
 
+	target := fmt.Sprintf("consul://%s:%d/%s?wait=14s&tag=srvs",
+		global.ServerConfig.ConsulConfig.Host, global.ServerConfig.ConsulConfig.Port, global.ServerConfig.UserSrvInfo.Name)
+
+	global.GrpcClient, err = grpc.Dial(target, grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`))
+	if err != nil {
+		zap.S().Panic(err)
+	}
 }

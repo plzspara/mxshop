@@ -5,26 +5,42 @@ type UserSrvConfig struct {
 }
 
 type Jwt struct {
-	Key string `mapstructure:"key"`
+	Key string `json:"key"`
 }
 
 type Redis struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	Password string `mapstructure:"password"`
-	Db       int    `mapstructure:"db"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Password string `json:"password"`
+	Db       int    `json:"db"`
 }
 
 type Consul struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
+	Host string `json:"host"`
+	Port int    `json:"port"`
 }
+
+type NacosInfo struct {
+	Ip                  string `mapstructure:"ip"`
+	Port                uint64 `mapstructure:"port"`
+	NamespaceId         string `mapstructure:"namespaceid"`
+	TimeoutMs           uint64 `mapstructure:"timeoutms"`
+	NotLoadCacheAtStart bool   `mapstructure:"notloadcacheatstart"`
+	LogDir              string `mapstructure:"logdir"`
+	CacheDir            string `mapstructure:"cachedir"`
+	LogLevel            string `mapstructure:"loglevel"`
+}
+
+type NacosConfig struct {
+	Nacos NacosInfo `json:"nacos"`
+}
+
 type ServerConfig struct {
-	Name         string        `mapstructure:"name"`
-	Port         int           `mapstructure:"port"`
-	Host         string        `mapstructure:"host"`
-	UserSrvInfo  UserSrvConfig `mapstructure:"user_srv"`
-	JwtInfo      Jwt           `mapstructure:"jwt"`
-	RedisConfig  Redis         `mapstructure:"redis"`
-	ConsulConfig Consul        `mapstructure:"consul"`
+	Name         string        `json:"name"`
+	Port         int           `json:"port"`
+	Host         string        `json:"host"`
+	UserSrvInfo  UserSrvConfig `json:"user_srv"`
+	JwtInfo      Jwt           `json:"jwt"`
+	RedisConfig  Redis         `json:"redis"`
+	ConsulConfig Consul        `json:"consul"`
 }

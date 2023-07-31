@@ -1,7 +1,10 @@
+name: "user_srv"
 mysql:
   host : "127.0.0.1"
   port : 3306
   db : "mxshop_user_srv"
   user : "root"
   password : "123456"
-
+consul:
+  host: "192.168.131.129"
+  port: 8500
