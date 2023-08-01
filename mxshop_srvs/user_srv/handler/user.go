@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
-	. "mxshop_srvs/user_srv/global"
-	. "mxshop_srvs/user_srv/model"
-	. "mxshop_srvs/user_srv/proto"
+	. "mxshop_srvs/global"
+	. "mxshop_srvs/model"
+	. "mxshop_srvs/proto"
 	"strings"
 	"time"
 )

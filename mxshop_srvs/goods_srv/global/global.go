@@ -1,8 +1,8 @@
 package global
 
 import (
+	"goods_srv/config"
 	"gorm.io/gorm"
-	"mxshop_srvs/config"
 )
 
 var (

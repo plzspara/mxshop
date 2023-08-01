@@ -2,12 +2,12 @@ package inittialize
 
 import (
 	"fmt"
+	. "goods_srv/global"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
-	. "mxshop_srvs/global"
 	"os"
 	"time"
 )

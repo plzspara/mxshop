@@ -9,8 +9,8 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"goods_srv/global"
 	"log"
-	"mxshop_srvs/global"
 )
 
 func GetEnvInfo(env string) bool {
@@ -21,9 +21,9 @@ func GetEnvInfo(env string) bool {
 func InitConfig() {
 	envInfo := GetEnvInfo("MXSHOP_DEBUG")
 	configFilePrefix := "config"
-	configFileName := fmt.Sprintf("%s-pro.yaml", configFilePrefix)
+	configFileName := fmt.Sprintf("user_srv/%s-pro.yaml", configFilePrefix)
 	if envInfo {
-		configFileName = fmt.Sprintf("%s-debug.yaml", configFilePrefix)
+		configFileName = fmt.Sprintf("user_srv/%s-debug.yaml", configFilePrefix)
 	}
 	v := viper.New()
 	v.SetConfigFile(configFileName)
