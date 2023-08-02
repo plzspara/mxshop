@@ -21,7 +21,7 @@ service Goods{
     rpc UpdateCategory(CategoryInfoRequest) returns(google.protobuf.Empty); //修改分类信息
 
     //品牌和轮播图
-    rpc BrandList(BrandFilterRequest) returns(BrandListResponse); //
+    rpc BrandList(BrandFilterRequest) returns(BrandListResponse); //批量获取品牌信息
     rpc CreateBrand(BrandRequest) returns(BrandInfoResponse); //新建品牌信息
     rpc DeleteBrand(BrandRequest) returns(google.protobuf.Empty); //删除品牌
     rpc UpdateBrand(BrandRequest) returns(google.protobuf.Empty); //修改品牌信息
@@ -46,6 +46,7 @@ message CategoryListRequest {
     int32 level = 2;
 }
 
+
 message CategoryInfoRequest {
     int32 id = 1;
     string name = 2;
@@ -53,6 +54,7 @@ message CategoryInfoRequest {
     int32 level = 4;
     bool isTab = 5;
 }
+
 
 message DeleteCategoryRequest {
     int32 id = 1;
@@ -82,6 +84,8 @@ message SubCategoryListResponse {
     CategoryInfoResponse info = 2;
     repeated CategoryInfoResponse subCategorys = 3;
 }
+
+
 
 message CategoryBrandFilterRequest  {
     int32 pages = 1;

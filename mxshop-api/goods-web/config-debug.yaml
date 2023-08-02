@@ -3,5 +3,5 @@ port: 8848
 namespace: '23c18a0a-bb55-4d75-b81e-8217193aa8cb'
 user: ''
 password: ''
-dataid: 'goods-srv'
+dataid: 'goods-web'
 group: 'dev'

@@ -1,51 +1,40 @@
 package model
 
 import (
-	"database/sql/driver"
-	"encoding/json"
+	"context"
+	"goods_srv/global"
+	"strconv"
+
 	"gorm.io/gorm"
-	"time"
 )
 
-type BaseModel struct {
-	Id        int32     `gorm:"primarykey"`
-	CreatedAt time.Time `gorm:"column:add_time"`
-	UpdatedAt time.Time `gorm:"column:update_time"`
-	DeleteAt  gorm.DeletedAt
-	IsDelete  bool
-}
-
-type GormList []string
-
-func (g GormList) Value() (driver.Value, error) {
-	return json.Marshal(g)
-}
-
-func (g *GormList) Scan(value interface{}) error {
-	return json.Unmarshal(value.([]byte), &g)
-}
-
+//类型， 这个字段是否能为null， 这个字段应该设置为可以为null还是设置为空， 0
+//实际开发过程中 尽量设置为不为null
+//https://zhuanlan.zhihu.com/p/73997266
+//这些类型我们使用int32还是int
 type Category struct {
 	BaseModel
-	Name             string `gorm:"type:varchar(20);not null;"`
-	Level            int32  `gorm:"type:int;not null;default:1"`
-	IsTab            bool   `gorm:"type:boolean;not null;default:false"`
-	ParentCategoryId int32  `gorm:"type:int"`
-	ParentCategory   *Category `json:"-"`
+	Name             string      `gorm:"type:varchar(20);not null" json:"name"`
+	ParentCategoryID int32       `json:"parent"`
+	ParentCategory   *Category   `json:"-"`
+	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"`
+	Level            int32       `gorm:"type:int;not null;default:1" json:"level"`
+	IsTab            bool        `gorm:"default:false;not null" json:"is_tab"`
 }
 
 type Brands struct {
 	BaseModel
-	Name string `gorm:"type:varchar(20);not null;"`
-	Logo string `gorm:"type:varchar(200);default:''"`
+	Name string `gorm:"type:varchar(20);not null"`
+	Logo string `gorm:"type:varchar(200);default:'';not null"`
 }
 
 type GoodsCategoryBrand struct {
 	BaseModel
-	CategoryId int32 `gorm:"type:int;index:idx_category_brand,unique"`
+	CategoryID int32 `gorm:"type:int;index:idx_category_brand,unique"`
 	Category   Category
-	BrandsId   int32 `gorm:"type:int;index:idx_category_brand,unique"`
-	Brands     Brands
+
+	BrandsID int32 `gorm:"type:int;index:idx_category_brand,unique"`
+	Brands   Brands
 }
 
 func (GoodsCategoryBrand) TableName() string {
@@ -56,28 +45,90 @@ type Banner struct {
 	BaseModel
 	Image string `gorm:"type:varchar(200);not null"`
 	Url   string `gorm:"type:varchar(200);not null"`
-	Index int32  `gorm:"type:int;default 1;not null"`
+	Index int32  `gorm:"type:int;default:1;not null"`
 }
 
 type Goods struct {
 	BaseModel
-	CategoryId int32 `gorm:"type:int;not null"`
-	Category   Category
-	BrandsId   int32 `gorm:"type:int;not null"`
-	Brands     Brands
-	OnSale     bool `gorm:"default:false;not null"`
-	ShipFree   bool `gorm:"default:false;not null"`
-	IsNew      bool `gorm:"default:false;not null"`
-	IsHot      bool `gorm:"default:false;not nul"`
 
-	Name     string `gorm:"type:varchar(200);not null"`
-	ClickNum int32  `gorm:"type:int;default:0;not null"`
-	SoldNum  int32  `gorm:"type:int;default:0;not null"`
-	FavNum   int32  `gorm:"type:int;default:0;not null"`
-	MarketPrice float32 `gorm:"not null"`
-	ShopPrice float32 `gorm:"not null"`
-	GoodsBrief string `gorm:"type:varchar(1000);not null"`
-	Images GormList `gorm:"type:varchar(1000);not null"`
-	DescImages GormList
-	GoodsFrontImage string `gorm:"type:varchar(200);not null"`
+	CategoryID int32 `gorm:"type:int;not null"`
+	Category   Category
+	BrandsID   int32 `gorm:"type:int;not null"`
+	Brands     Brands
+
+	OnSale   bool `gorm:"default:false;not null"`
+	ShipFree bool `gorm:"default:false;not null"`
+	IsNew    bool `gorm:"default:false;not null"`
+	IsHot    bool `gorm:"default:false;not null"`
+
+	Name            string   `gorm:"type:varchar(50);not null"`
+	GoodsSn         string   `gorm:"type:varchar(50);not null"`
+	ClickNum        int32    `gorm:"type:int;default:0;not null"`
+	SoldNum         int32    `gorm:"type:int;default:0;not null"`
+	FavNum          int32    `gorm:"type:int;default:0;not null"`
+	MarketPrice     float32  `gorm:"not null"`
+	ShopPrice       float32  `gorm:"not null"`
+	GoodsBrief      string   `gorm:"type:varchar(100);not null"`
+	Images          GormList `gorm:"type:varchar(1000);not null"`
+	DescImages      GormList `gorm:"type:varchar(1000);not null"`
+	GoodsFrontImage string   `gorm:"type:varchar(200);not null"`
+}
+
+func (g *Goods) AfterCreate(tx *gorm.DB) (err error) {
+	esModel := EsGoods{
+		ID:          g.ID,
+		CategoryID:  g.CategoryID,
+		BrandsID:    g.BrandsID,
+		OnSale:      g.OnSale,
+		ShipFree:    g.ShipFree,
+		IsNew:       g.IsNew,
+		IsHot:       g.IsHot,
+		Name:        g.Name,
+		ClickNum:    g.ClickNum,
+		SoldNum:     g.SoldNum,
+		FavNum:      g.FavNum,
+		MarketPrice: g.MarketPrice,
+		GoodsBrief:  g.GoodsBrief,
+		ShopPrice:   g.ShopPrice,
+	}
+
+	_, err = global.EsClient.Index().Index(esModel.GetIndexName()).BodyJson(esModel).Id(strconv.Itoa(int(g.ID))).Do(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *Goods) AfterUpdate(tx *gorm.DB) (err error) {
+	esModel := EsGoods{
+		ID:          g.ID,
+		CategoryID:  g.CategoryID,
+		BrandsID:    g.BrandsID,
+		OnSale:      g.OnSale,
+		ShipFree:    g.ShipFree,
+		IsNew:       g.IsNew,
+		IsHot:       g.IsHot,
+		Name:        g.Name,
+		ClickNum:    g.ClickNum,
+		SoldNum:     g.SoldNum,
+		FavNum:      g.FavNum,
+		MarketPrice: g.MarketPrice,
+		GoodsBrief:  g.GoodsBrief,
+		ShopPrice:   g.ShopPrice,
+	}
+
+	_, err = global.EsClient.Update().Index(esModel.GetIndexName()).
+		Doc(esModel).Id(strconv.Itoa(int(g.ID))).Do(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *Goods) AfterDelete(tx *gorm.DB) (err error) {
+	_, err = global.EsClient.Delete().Index(EsGoods{}.GetIndexName()).Id(strconv.Itoa(int(g.ID))).Do(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,9 +1,7 @@
-nacos:
-  ip: "192.168.131.129"
-  port: 8848
-  namespaceid: "79484f6d-181a-48d8-8070-3aaa28126c69"
-  timeoutms: 5000
-  notloadcacheatstart: true
-  logdir: "tmp/nacos/log"
-  cachedir: "tmp/nacos/cache"
-  loglevel: "debug"
+host: '192.168.131.129'
+port: 8848
+namespace: '23c18a0a-bb55-4d75-b81e-8217193aa8cb'
+user: ''
+password: ''
+dataid: 'goods-srv'
+group: 'dev'

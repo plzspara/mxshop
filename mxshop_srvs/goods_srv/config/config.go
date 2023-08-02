@@ -1,34 +1,38 @@
 package config
 
-type MysqlConfig struct {
-	Host     string `json:"host" mapstructure:"host"`
-	Port     int    `json:"port" mapstructure:"port"`
-	Db       string `json:"db" mapstructure:"db"`
-	User     string `json:"user" mapstructure:"user"`
-	Password string `json:"password" mapstructure:"password"`
+type MysqlConfig struct{
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+	Name string `mapstructure:"db" json:"db"`
+	User string `mapstructure:"user" json:"user"`
+	Password string `mapstructure:"password" json:"password"`
 }
 
-type ConsulConfig struct {
-	Host string `json:"host" mapstructure:"host"`
-	Port int    `json:"port" mapstructure:"port"`
-}
-type ServerConfig struct {
-	Name       string       `json:"name" mapstructure:"name"`
-	MysqlInfo  MysqlConfig  `json:"mysql" mapstructure:"mysql"`
-	ConsulInfo ConsulConfig `json:"consul" mapstructure:"consul"`
+type ConsulConfig struct{
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
 }
 
-type NacosInfo struct {
-	Ip                  string `mapstructure:"ip"`
-	Port                uint64 `mapstructure:"port"`
-	NamespaceId         string `mapstructure:"namespaceid"`
-	TimeoutMs           uint64 `mapstructure:"timeoutms"`
-	NotLoadCacheAtStart bool   `mapstructure:"notloadcacheatstart"`
-	LogDir              string `mapstructure:"logdir"`
-	CacheDir            string `mapstructure:"cachedir"`
-	LogLevel            string `mapstructure:"loglevel"`
+type EsConfig struct{
+	Host string `mapstructure:"host" json:"host"`
+	Port int    `mapstructure:"port" json:"port"`
+}
+
+type ServerConfig struct{
+	Name string `mapstructure:"name" json:"name"`
+	Host string `mapstructure:"host" json:"host"`
+	Tags []string `mapstructure:"tags" json:"tags"`
+	MysqlInfo MysqlConfig `mapstructure:"mysql" json:"mysql"`
+	ConsulInfo ConsulConfig `mapstructure:"consul" json:"consul"`
+	EsInfo EsConfig `mapstructure:"es" json:"es"`
 }
 
 type NacosConfig struct {
-	Nacos NacosInfo `json:"nacos"`
+	Host      string `mapstructure:"host"`
+	Port      uint64    `mapstructure:"port"`
+	Namespace string `mapstructure:"namespace"`
+	User      string `mapstructure:"user"`
+	Password  string `mapstructure:"password"`
+	DataId    string `mapstructure:"dataid"`
+	Group     string `mapstructure:"group"`
 }

@@ -16,3 +16,6 @@
 /mxshop-api/tmp/
 /mxshop_srvs/test/
 /mxshop_srvs/tmp/
+/mxshop_srvs/user_srv/tmp/nacos/log/nacos-sdk.log
+/mxshop_srvs/goods_srv/model/main/main.go
+/mxshop_srvs/user_srv/tmp/nacos/cache/config/user-srv@@dev@@79484f6d-181a-48d8-8070-3aaa28126c69
