@@ -3,15 +3,14 @@ package model
 import (
 	"context"
 	"goods_srv/global"
-	"strconv"
-
 	"gorm.io/gorm"
+	"strconv"
 )
 
-//类型， 这个字段是否能为null， 这个字段应该设置为可以为null还是设置为空， 0
-//实际开发过程中 尽量设置为不为null
-//https://zhuanlan.zhihu.com/p/73997266
-//这些类型我们使用int32还是int
+// 类型， 这个字段是否能为null， 这个字段应该设置为可以为null还是设置为空， 0
+// 实际开发过程中 尽量设置为不为null
+// https://zhuanlan.zhihu.com/p/73997266
+// 这些类型我们使用int32还是int
 type Category struct {
 	BaseModel
 	Name             string      `gorm:"type:varchar(20);not null" json:"name"`

@@ -2,16 +2,15 @@ package middlewares
 
 import (
 	"fmt"
-	"goods-web/global"
-
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
+	"goods-web/global"
 )
 
-func Trace() gin.HandlerFunc{
-	return func(ctx *gin.Context){
+func Trace() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
 		cfg := jaegercfg.Configuration{
 			Sampler: &jaegercfg.SamplerConfig{
 				Type:  jaeger.SamplerTypeConst,

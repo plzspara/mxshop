@@ -51,7 +51,11 @@ func GetRedisClient() *redis.Client {
 func GetMsmCode() string {
 	n := rand.Int63n(time.Now().UnixNano()) + 123789
 	n = n << 2
-	return strconv.FormatInt(n%1000000, 10)
+	n %= 1000000
+	if n < 1000000 {
+		n *= 10
+	}
+	return strconv.FormatInt(n, 10)
 }
 
 // 动态获取端口号
